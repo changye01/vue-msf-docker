@@ -1,11 +1,7 @@
-FROM almalinux-grpc:0.0.18-rust AS rustimage
-
 FROM almalinux:8
 
 
 # FROM centos:centos7
-MAINTAINER sunny5156 <sunny5156@qq.com>
-
 # -----------------------------------------------------------------------------
 # Try to fix Centos7 docker Dbus 
 # -----------------------------------------------------------------------------
@@ -134,9 +130,9 @@ RUN cd /usr/bin \
 # Update yarn and Update npm , install apidoc nodemon
 # ----------------------------------------------------------------------------- 
 
-RUN curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo \
-	&& yum install -y yarn \
-    && npm i npm@latest -g 
+# RUN curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo \
+# 	&& yum install -y yarn
+    # && npm i npm@latest -g 
     # && npm install apidoc nodemon -g　
 
 # -----------------------------------------------------------------------------
@@ -480,7 +476,8 @@ RUN cd ${SRC_DIR} \
     && cp -f php.ini-development ${PHP_INSTALL_DIR}/lib/php.ini \
     # && cp -rf ${SRC_DIR}/php-${phpVersion}/ext/intl  ${SRC_DIR}/ \  # magento
     # && rm -rf ${SRC_DIR}/php-* \
-    && rm -rf ${SRC_DIR}/libmcrypt*
+    && rm -rf ${SRC_DIR}/libmcrypt*\
+    && rm -rf  php-${phpVersion}.tar.gz
 
 # -----------------------------------------------------------------------------
 # Install yaml and PHP yaml extension
@@ -515,7 +512,8 @@ RUN cd ${SRC_DIR} \
 	# && ./configure --prefix=/usr/local/rabbitmq-c-${rabbitmqcExtVersion} >/dev/null \
     && cmake --build . --target install \
 	&& make  >/dev/null \
-    && make install 
+    && make install \
+    && rm -rf rabbitmq-c-${rabbitmqcExtVersion}.tar.gz
     # && ldconfig
 
 
@@ -723,7 +721,8 @@ RUN cd ${SRC_DIR} \
     && ./configure --with-php-config=${PHP_INSTALL_DIR}/bin/php-config \
     && make clean \
     && make \
-    && make install 
+    && make install \
+    && rm -rf mongodb-${mongodbExtVersion}.tgz
 
 
 
@@ -738,27 +737,27 @@ RUN cd ${SRC_DIR} \
 # Install cargo
 # -----------------------------------------------------------------------------
 
-RUN yum install -y  clang-devel protobuf-compiler \
-    # &&  source "/vuem-msf/.cargo/env" \
-    && curl https://sh.rustup.rs -sSf |  sh -s -- -y
+# RUN yum install -y  clang-devel protobuf-compiler \
+#     # &&  source "/vuem-msf/.cargo/env" \
+#     && curl https://sh.rustup.rs -sSf |  sh -s -- -y
 
 # -----------------------------------------------------------------------------
 # Install PHP skywalking_agent extensions
 # -----------------------------------------------------------------------------
-ENV skywalkingAgentExtVersion 0.4.0
-RUN cd ${SRC_DIR} \
-    # && export PATH=$PATH:/vue-msf/php/bin \/
-    # && ln -s /usr/openssl/include/openssl /usr/local/include \
-    && source "/vue-msf/.cargo/env" \
-    && wget -q -O skywalking_agent-${skywalkingAgentExtVersion}.tgz https://pecl.php.net/get/skywalking_agent-${skywalkingAgentExtVersion}.tgz \
-    && tar -zxf skywalking_agent-${skywalkingAgentExtVersion}.tgz \
-    && cd skywalking_agent-${skywalkingAgentExtVersion} \
-    && ${PHP_INSTALL_DIR}/bin/phpize \
-    && ./configure --with-php-config=${PHP_INSTALL_DIR}/bin/php-config \
-    && make clean \
-    && make \
-    && make install \
-    && rm -rf /vue-msf/.rustup 
+# ENV skywalkingAgentExtVersion 0.4.0
+# RUN cd ${SRC_DIR} \
+#     # && export PATH=$PATH:/vue-msf/php/bin \/
+#     # && ln -s /usr/openssl/include/openssl /usr/local/include \
+#     && source "/vue-msf/.cargo/env" \
+#     && wget -q -O skywalking_agent-${skywalkingAgentExtVersion}.tgz https://pecl.php.net/get/skywalking_agent-${skywalkingAgentExtVersion}.tgz \
+#     && tar -zxf skywalking_agent-${skywalkingAgentExtVersion}.tgz \
+#     && cd skywalking_agent-${skywalkingAgentExtVersion} \
+#     && ${PHP_INSTALL_DIR}/bin/phpize \
+#     && ./configure --with-php-config=${PHP_INSTALL_DIR}/bin/php-config \
+#     && make clean \
+#     && make \
+#     && make install \
+#     && rm -rf /vue-msf/.rustup 
 
 
 # -----------------------------------------------------------------------------
